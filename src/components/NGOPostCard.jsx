@@ -33,14 +33,12 @@ const NGOPostCard = ({ post, currentUser }) => {
     }
   }, [post]);
 
-  // Use a ref to hold the current post ID to avoid stale closure issues in socket handlers
   const postIdRef = useRef(localPost._id);
   useEffect(() => {
     postIdRef.current = localPost._id;
   }, [localPost._id]);
 
   useEffect(() => {
-    // Handlers with stable references for socket events
     const handleReceiveComment = (comment) => {
       if (comment.postId === postIdRef.current) {
         setLocalPost((prev) => ({
@@ -114,7 +112,6 @@ const NGOPostCard = ({ post, currentUser }) => {
           like.actorModel === (currentUser.isNGO ? "NGO" : "User")
       );
 
-      // Optimistically update UI
       setLocalPost((prev) => {
         const newLikes = wasLiked
           ? prev.likes.filter(
@@ -135,33 +132,29 @@ const NGOPostCard = ({ post, currentUser }) => {
         return { ...prev, likes: newLikes };
       });
 
-      // Emit socket event immediately
       socket.emit(wasLiked ? "postUnliked" : "newLike", {
         userId: currentUser._id,
         postId: localPost._id,
         actorModel: currentUser.isNGO ? "NGO" : "User",
       });
 
-      // Only send notification if post owner is not the current user
-if (localPost.ngo?._id && localPost.ngo._id !== currentUser._id && !wasLiked) {
-  socket.emit("sendNotification", {
-    type: "like",
-    senderId: currentUser._id,
-    receiverId: localPost.ngo._id,
-    message: `${currentUser.name || "Someone"} liked your post`,
-    postId: localPost._id,
-  });
-}
+      if (localPost.ngo?._id && localPost.ngo._id !== currentUser._id && !wasLiked) {
+        socket.emit("sendNotification", {
+          type: "like",
+          senderId: currentUser._id,
+          receiverId: localPost.ngo._id,
+          message: `${currentUser.name || "Someone"} liked your post`,
+          postId: localPost._id,
+        });
+      }
 
-
-      // Send API call in background
       const updatedPost = await dispatch(likeNGOPostThunk(localPost._id));
-     if (updatedPost?.payload?.post?.likes) {
-  setLocalPost((prev) => ({
-    ...prev,
-    likes: updatedPost.payload.post.likes,
-  }));
-}
+      if (updatedPost?.payload?.post?.likes) {
+        setLocalPost((prev) => ({
+          ...prev,
+          likes: updatedPost.payload.post.likes,
+        }));
+      }
     } catch (error) {
       console.error("Error liking post:", error);
     }
@@ -199,23 +192,20 @@ if (localPost.ngo?._id && localPost.ngo._id !== currentUser._id && !wasLiked) {
           setLocalPost(updatedPost.payload.post);
           setCommentInput("");
 
-          // Emit new comment event to socket
           socket.emit("newComment", {
-            ...updatedPost.payload.post.comments.slice(-1)[0], // last comment
+            ...updatedPost.payload.post.comments.slice(-1)[0],
             postId: localPost._id,
           });
 
           if (localPost.ngo?._id && localPost.ngo._id !== currentUser._id) {
-  socket.emit("sendNotification", {
-    type: "comment",
-    senderId: currentUser._id,
-    receiverId: localPost.ngo._id,
-    message: `${currentUser.name || "Someone"} commented on your post`,
-    postId: localPost._id,
-  });
-}
-
-
+            socket.emit("sendNotification", {
+              type: "comment",
+              senderId: currentUser._id,
+              receiverId: localPost.ngo._id,
+              message: `${currentUser.name || "Someone"} commented on your post`,
+              postId: localPost._id,
+            });
+          }
         }
       } catch (error) {
         console.error("Error commenting on post:", error);
@@ -225,7 +215,6 @@ if (localPost.ngo?._id && localPost.ngo._id !== currentUser._id && !wasLiked) {
 
   if (!post) return null;
 
-  
   const isLiked = !!(
     currentUser?._id &&
     localPost.likes?.some(
@@ -261,7 +250,7 @@ if (localPost.ngo?._id && localPost.ngo._id !== currentUser._id && !wasLiked) {
       </div>
 
       {/* Media */}
-      <div className="max-h-[400px] overflow-hidden rounded-b-xl">
+      <div className="rounded-b-xl">
         {localPost.mediaType === "image" && localPost.mediaUrl && (
           <img
             src={localPost.mediaUrl}
@@ -297,7 +286,6 @@ if (localPost.ngo?._id && localPost.ngo._id !== currentUser._id && !wasLiked) {
         >
           <span className="text-lg">{isLiked ? "❤️" : "🤍"}</span>
           <span>{Math.max(localPost.likes?.length || 0, 0)}</span>
-
         </button>
 
         <button
@@ -347,13 +335,14 @@ if (localPost.ngo?._id && localPost.ngo._id !== currentUser._id && !wasLiked) {
         {localPost.comments?.length > 0 && (
           <>
             {[...localPost.comments]
-            .reverse()
+              .slice()
+              .reverse()
               .slice(0, showAllComments ? undefined : 3)
-              
               .map((comment, index) => (
                 <div
-      key={`${localPost._id}-${comment._id || comment.id || `${comment.author}-${comment.createdAt}-${index}`}`}
-
+                  key={`${localPost._id}-${
+                    comment._id || comment.id || `${comment.author}-${comment.createdAt}-${index}`
+                  }`}
                   className="border-b border-gray-100 py-2 last:border-none"
                 >
                   <Comment
@@ -413,10 +402,7 @@ NGOPostCard.propTypes = {
       PropTypes.shape({
         _id: PropTypes.string.isRequired,
         text: PropTypes.string,
-        author: PropTypes.oneOfType([
-          PropTypes.string,
-          PropTypes.object
-        ]).isRequired,
+        author: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
         createdAt: PropTypes.string,
       })
     ),
