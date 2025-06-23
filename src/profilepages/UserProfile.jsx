@@ -160,6 +160,15 @@ const goToChat = () => {
           </button>
         )}
 
+        {userProfile?._id !== user._id && (
+          <button
+            onClick={goToChat}
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-950 transition"
+          >
+            Message
+          </button>
+        )}
+
         {userProfile?._id === user._id && (
           <div className="mt-4 flex flex-wrap gap-3 justify-center sm:justify-start">
             <Link
