@@ -5,7 +5,7 @@ import { useParams, Link } from "react-router-dom";
 import { axiosInstance } from "../utils/axiosInstance";
 import { useNavigate } from "react-router-dom";
 import NGOPostCard from "../components/NGOPostCard";
-import { nanoid } from 'nanoid';
+import { nanoid } from "nanoid";
 import { addPartner, setSelectedPartner } from "../store/slice/message/message.slice";
 
 const NgoProfile = () => {
@@ -145,7 +145,7 @@ const NgoProfile = () => {
   }
 
   return (
-    <div className="max-w-5xl mx-auto p-6">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 overflow-x-hidden">
       {/* NGO Header */}
       <div className="flex flex-col sm:flex-row gap-6 items-center border-b pb-6">
         {ngo.logoUrl ? (
@@ -178,23 +178,22 @@ const NgoProfile = () => {
               </Link>
             )}
 
-          <button
-  onClick={() => {
-    const partner = {
-      _id: ngo.createdBy._id,
-      name: ngo.name,
-      email: ngo.email,
-      profilepic: ngo.logoUrl || "", // Use logoUrl instead of profilepic
-    };
-    dispatch(addPartner(partner));
-    dispatch(setSelectedPartner(partner));
-    navigate(`/messages/${ngo.createdBy._id}`);
-  }}
-  className="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
->
-  Message NGO
-</button>
-
+            <button
+              onClick={() => {
+                const partner = {
+                  _id: ngo.createdBy._id,
+                  name: ngo.name,
+                  email: ngo.email,
+                  profilepic: ngo.logoUrl || "", // Use logoUrl instead of profilepic
+                };
+                dispatch(addPartner(partner));
+                dispatch(setSelectedPartner(partner));
+                navigate(`/messages/${ngo.createdBy._id}`);
+              }}
+              className="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+            >
+              Message NGO
+            </button>
 
             {loggedInUser && ngo?.createdBy?._id === loggedInUser._id && (
               <Link
@@ -267,16 +266,14 @@ const NgoProfile = () => {
           <p className="text-gray-500">No posts added yet.</p>
         )}
 
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-6 max-w-full overflow-x-hidden">
           {posts.map((post, index) => (
-
-<NGOPostCard
-  key={post._id || nanoid()}
-  post={post}
-  currentUser={loggedInUser}
-/>
-))}
-
+            <NGOPostCard
+              key={post._id || nanoid()}
+              post={post}
+              currentUser={loggedInUser}
+            />
+          ))}
         </div>
 
         {loadingPosts && (

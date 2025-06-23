@@ -119,11 +119,11 @@ const allPosts = [
 ].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
 
- return (
-  <div className="relative container mx-auto p-4 pb-36"> {/* pb-36 to give enough space below */}
-    <h1 className="text-3xl font-bold text-white mb-6">Recent Posts</h1>
+return (
+  <div className="relative max-w-screen-sm mx-auto px-4 sm:px-6 pb-36 overflow-x-hidden"> {/* Limit max width and prevent overflow */}
+    <h1 className="text-3xl font-bold text-white mb-4 sm:mb-6">Recent Posts</h1>
 
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-4 sm:gap-6"> {/* Smaller gap on mobile */}
       {allPosts.map(post =>
         post.type === 'user' ? (
           <UserPostCard key={`user-${post._id}`} post={post} currentUser={userProfile} />
@@ -133,12 +133,11 @@ const allPosts = [
       )}
     </div>
 
-    {/* ✅ SOS Button OUTSIDE content and well-positioned */}
     {userProfile?.gender === "female" && userProfile?.femaleVerified && (
-      <div className="fixed z-50 right-4 bottom-20 sm:bottom-6"> {/* Add extra space on mobile */}
+      <div className="fixed z-50 right-4 sm:right-6 bottom-16 sm:bottom-6">
         <button
           onClick={handleShareLocation}
-          className="flex items-center gap-2 bg-gradient-to-r from-red-600 to-red-800 text-white font-semibold px-5 py-3 rounded-full shadow-lg hover:scale-105 transition-transform duration-300"
+          className="flex items-center gap-2 bg-gradient-to-r from-red-600 to-red-800 text-white font-semibold px-4 py-3 rounded-full shadow-lg hover:scale-105 transition-transform duration-300"
           title="Send Emergency Location"
         >
           <svg
@@ -161,6 +160,7 @@ const allPosts = [
     )}
   </div>
 );
+
 
 };
 

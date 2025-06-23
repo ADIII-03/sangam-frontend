@@ -17,25 +17,20 @@ const Search = () => {
   const { otherUsers = [], screenLoading } = useSelector((state) => state.user);
 
   useEffect(() => {
-  if (query.trim().length === 0) return;
+  if (query.trim().length === 0) {
+   
+    return;
+  };
 
   const delay = setTimeout(() => {
     dispatch(searchUsers(query));
-  }, 500); // debounce time
+    const updatedHistory = [query, ...searchHistory.filter(q => q !== query)].slice(0, 5);
+    setSearchHistory(updatedHistory);
+    localStorage.setItem('search-history', JSON.stringify(updatedHistory));
+  }, 1000);
 
   return () => clearTimeout(delay);
-}, [query, dispatch]);
-
-useEffect(() => {
-  if (query.trim().length === 0 || !otherUsers || otherUsers.length === 0) return;
-
-  setSearchHistory(prev => {
-    const updated = [query, ...prev.filter(q => q !== query)].slice(0, 5);
-    localStorage.setItem('search-history', JSON.stringify(updated));
-    return updated;
-  });
-}, [otherUsers]); // update history *after* users are fetched
-
+}, [query]);
 
 
   const handleRedirect = (account) => {

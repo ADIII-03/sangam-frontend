@@ -135,14 +135,16 @@ const goToChat = () => {
 
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
+    <div className="max-w-screen-sm sm:max-w-4xl mx-auto px-4 sm:px-6 overflow-x-hidden">
+
       {/* Profile Header */}
       <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 border-b pb-6">
-        <img
-          src={user.profilepic}
-          alt="Profile"
-          className="w-36 h-36 rounded-full object-cover border shadow"
-        />
+       <img
+  src={user.profilepic}
+  alt="Profile"
+  className="w-24 h-24 sm:w-36 sm:h-36 rounded-full object-cover border shadow"
+/>
+
         <div className="text-center sm:text-left">
           <h2 className="text-2xl font-semibold">{user.name}</h2>
           <p className="text-gray-600">{user.email}</p>
@@ -151,14 +153,7 @@ const goToChat = () => {
             {user.isVerified ? "✅ Verified" : "❌ Not Verified"}
           </p>
         </div>
-        {userProfile?._id !== user._id && (
-          <button
-            onClick={goToChat}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-950 transition"
-          >
-            Message
-          </button>
-        )}
+       
 
         {userProfile?._id !== user._id && (
           <button
@@ -220,11 +215,12 @@ const goToChat = () => {
           <p className="text-gray-500">No posts yet.</p>
         )}
 
-        <div className="flex flex-col gap-6">
-          {uniquePosts.map((post) => (
-            <UserPostCard key={post._id} post={post} currentUser={userProfile} />
-          ))}
-        </div>
+      <div className="flex flex-col gap-4 sm:gap-6 overflow-x-hidden">
+  {uniquePosts.map((post) => (
+    <UserPostCard key={post._id} post={post} currentUser={userProfile} />
+  ))}
+</div>
+
 
         {loadingPosts && (
           <p className="mt-4 text-center text-gray-500">Loading more posts...</p>
