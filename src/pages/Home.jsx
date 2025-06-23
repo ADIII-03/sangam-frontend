@@ -120,7 +120,7 @@ const allPosts = [
 
 
 return (
-  <div className="w-full px-2 sm:px-4 pb-36 overflow-x-hidden">
+  <div className="w-full px-1 sm:px-2 pb-36 overflow-x-hidden">
     <h1 className="text-3xl font-bold text-white mb-4 sm:mb-6">Recent Posts</h1>
 
     <div className="flex flex-col gap-4 sm:gap-6">
