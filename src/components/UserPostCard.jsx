@@ -194,147 +194,145 @@ const UserPostCard = ({ post, currentUser }) => {
     localPost.createdBy?.name || localPost.createdBy?.id?.name || "Anonymous";
 
   return (
-<div className="bg-white rounded-xl shadow-lg w-full mb-8 border border-gray-200 overflow-hidden">
-
-      {/* Header */}
-      <div className="flex items-center p-4 border-b border-gray-100">
-        {/* Profile pic placeholder */}
-        <div className="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center text-xl font-semibold text-gray-600 mr-4">
-          <img
-            src={localPost.createdBy?.id?.profilepic}
-            alt=""
-            className="w-10 h-10 rounded-full border-2 border-blue-400"
-          />
-        </div>
-        <div>
-          <h3 className="font-semibold text-gray-900">{creatorName}</h3>
-          {localPost.location?.address && (
-            <p className="text-xs text-gray-500 italic">📍 {localPost.location.address}</p>
-          )}
-          <p className="text-xs text-gray-500">
-            {localPost.createdAt && !isNaN(new Date(localPost.createdAt).getTime())
-              ? `${formatDistanceToNow(new Date(localPost.createdAt))} ago`
-              : "Invalid date"}
-          </p>
-        </div>
-      </div>
-
-      {/* Media */}
-      <div className="max-h-[400px] overflow-hidden rounded-b-xl">
-        {localPost.mediaType === "image" && localPost.mediaUrl && (
-          <img
-            src={localPost.mediaUrl}
-            alt="Post media"
-            className="w-full object-cover"
-            loading="lazy"
-          />
-        )}
-
-        {localPost.mediaType === "video" && localPost.mediaUrl && (
-          <video controls className="w-full object-contain" preload="metadata">
-            <source src={localPost.mediaUrl} type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
-        )}
-      </div>
-
-      {/* Caption & Category */}
-      <div className="p-4">
-        {localPost.caption && (
-          <p className="text-gray-800 mb-2 whitespace-pre-wrap">{localPost.caption}</p>
-        )}
-        <span className="inline-block px-3 py-1 text-xs font-semibold text-gray-600 bg-gray-100 rounded-full capitalize">
-          {localPost.category || "Other"}
-        </span>
-      </div>
-
-      {/* Actions */}
-      <div className="flex justify-around border-t border-gray-100 px-4 py-3 text-gray-700 text-sm select-none">
-        <button
-          onClick={handleLike}
-          className={`flex items-center gap-2 transition-colors ${
-            isLiked ? "text-red-500" : "hover:text-red-400"
-          }`}
-          aria-label="Like post"
-        >
-          <span className="text-lg">{isLiked ? "❤️" : "🤍"}</span>
-          <span>{Math.max(localPost.likes?.length || 0, 0)}</span>
-        </button>
-
-        <button
-          onClick={handleShare}
-          className="flex items-center gap-2 hover:text-green-600 transition-colors"
-          aria-label="Share post"
-        >
-          <span className="text-lg">🔄</span>
-          <span>{localPost.sharedBy?.length || 0}</span>
-        </button>
-
-        <button
-          onClick={handleFlag}
-          className="flex items-center gap-2 hover:text-red-600 transition-colors"
-          aria-label="Flag post"
-        >
-          <span className="text-lg">🚩</span>
-          <span>Flag</span>
-        </button>
-      </div>
-
-      {/* Comment input */}
-      <form
-  onSubmit={handleComment}
-  className="flex flex-wrap items-center gap-2 border-t border-gray-100 px-4 py-3"
->
-  <input
-    type="text"
-    name="comment"
-    placeholder="Add a comment..."
-    value={commentInput}
-    onChange={(e) => setCommentInput(e.target.value)}
-    className="flex-grow min-w-0 border border-gray-300 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-950"
-    autoComplete="off"
-  />
-  <button
-    type="submit"
-    disabled={!commentInput.trim()}
-    className="bg-blue-600 disabled:bg-blue-300 rounded-full px-5 py-2 text-sm font-semibold transition-colors hover:bg-blue-700 disabled:cursor-not-allowed"
-  >
-    Post
-  </button>
-</form>
-
-
-      {/* Comments */}
-      <div className="px-4 pb-4">
-        {localPost.comments?.length > 0 && (
-          <>
-            {[...localPost.comments]
-              .reverse()
-              .slice(0, showAllComments ? undefined : 3)
-              .map((comment) => (
-                <div
-                  key={comment._id || comment.id || Math.random().toString()}
-                  className="border-b border-gray-100 py-2 last:border-none"
-                >
-                  <Comment comment={comment} commenter={commentersMap[comment.id]} />
-                </div>
-              ))}
-
-            {localPost.comments.length > 3 && (
-              <button
-                onClick={() => setShowAllComments(!showAllComments)}
-                className="mt-2 text-blue-600 text-sm font-semibold hover:underline"
-                aria-label="Toggle show all comments"
-              >
-                {showAllComments
-                  ? "Hide comments"
-                  : `View all ${localPost.comments.length} comments`}
-              </button>
-            )}
-          </>
-        )}
-      </div>
+<div className="bg-white rounded-xl shadow-lg w-full max-w-4xl mx-auto mb-8 border border-gray-200 overflow-hidden">
+  {/* Header */}
+  <div className="flex items-center p-6 border-b border-gray-100">
+    <div className="w-14 h-14 rounded-full bg-gray-300 flex items-center justify-center text-xl font-semibold text-gray-600 mr-5">
+      <img
+        src={localPost.createdBy?.id?.profilepic}
+        alt=""
+        className="w-12 h-12 rounded-full border-2 border-blue-400 object-cover"
+      />
     </div>
+    <div>
+      <h3 className="font-semibold text-gray-900 text-lg">{creatorName}</h3>
+      {localPost.location?.address && (
+        <p className="text-sm text-gray-500 italic">📍 {localPost.location.address}</p>
+      )}
+      <p className="text-xs text-gray-400">
+        {localPost.createdAt && !isNaN(new Date(localPost.createdAt).getTime())
+          ? `${formatDistanceToNow(new Date(localPost.createdAt))} ago`
+          : "Invalid date"}
+      </p>
+    </div>
+  </div>
+
+  {/* Media */}
+  <div className="w-full max-h-[600px] sm:max-h-[500px] md:max-h-[600px] lg:max-h-[700px] overflow-hidden">
+    {localPost.mediaType === "image" && localPost.mediaUrl && (
+      <img
+        src={localPost.mediaUrl}
+        alt="Post media"
+        className="w-full h-auto object-contain"
+        loading="lazy"
+      />
+    )}
+
+    {localPost.mediaType === "video" && localPost.mediaUrl && (
+      <video controls className="w-full h-auto object-contain" preload="metadata">
+        <source src={localPost.mediaUrl} type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+    )}
+  </div>
+
+  {/* Caption & Category */}
+  <div className="p-6">
+    {localPost.caption && (
+      <p className="text-gray-800 mb-4 whitespace-pre-wrap text-base sm:text-lg">{localPost.caption}</p>
+    )}
+    <span className="inline-block px-4 py-1 text-sm font-semibold text-gray-600 bg-gray-100 rounded-full capitalize">
+      {localPost.category || "Other"}
+    </span>
+  </div>
+
+  {/* Actions */}
+  <div className="flex justify-around border-t border-gray-100 px-6 py-4 text-gray-700 text-base sm:text-lg select-none">
+    <button
+      onClick={handleLike}
+      className={`flex items-center gap-3 transition-colors ${
+        isLiked ? "text-red-500" : "hover:text-red-400"
+      }`}
+      aria-label="Like post"
+    >
+      <span className="text-2xl">{isLiked ? "❤️" : "🤍"}</span>
+      <span>{Math.max(localPost.likes?.length || 0, 0)}</span>
+    </button>
+
+    <button
+      onClick={handleShare}
+      className="flex items-center gap-3 hover:text-green-600 transition-colors"
+      aria-label="Share post"
+    >
+      <span className="text-2xl">🔄</span>
+      <span>{localPost.sharedBy?.length || 0}</span>
+    </button>
+
+    <button
+      onClick={handleFlag}
+      className="flex items-center gap-3 hover:text-red-600 transition-colors"
+      aria-label="Flag post"
+    >
+      <span className="text-2xl">🚩</span>
+      <span>Flag</span>
+    </button>
+  </div>
+
+  {/* Comment input */}
+  <form
+    onSubmit={handleComment}
+    className="flex flex-wrap items-center gap-3 border-t border-gray-100 px-6 py-4"
+  >
+    <input
+      type="text"
+      name="comment"
+      placeholder="Add a comment..."
+      value={commentInput}
+      onChange={(e) => setCommentInput(e.target.value)}
+      className="flex-grow min-w-0 border border-gray-300 rounded-full px-5 py-3 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-950"
+      autoComplete="off"
+    />
+    <button
+      type="submit"
+      disabled={!commentInput.trim()}
+      className="bg-blue-600 disabled:bg-blue-300 rounded-full px-6 py-3 text-sm sm:text-base font-semibold transition-colors hover:bg-blue-700 disabled:cursor-not-allowed"
+    >
+      Post
+    </button>
+  </form>
+
+  {/* Comments */}
+  <div className="px-6 pb-6">
+    {localPost.comments?.length > 0 && (
+      <>
+        {[...localPost.comments]
+          .reverse()
+          .slice(0, showAllComments ? undefined : 3)
+          .map((comment) => (
+            <div
+              key={comment._id || comment.id || Math.random().toString()}
+              className="border-b border-gray-100 py-3 last:border-none"
+            >
+              <Comment comment={comment} commenter={commentersMap[comment.id]} />
+            </div>
+          ))}
+
+        {localPost.comments.length > 3 && (
+          <button
+            onClick={() => setShowAllComments(!showAllComments)}
+            className="mt-3 text-blue-600 text-sm font-semibold hover:underline"
+            aria-label="Toggle show all comments"
+          >
+            {showAllComments
+              ? "Hide comments"
+              : `View all ${localPost.comments.length} comments`}
+          </button>
+        )}
+      </>
+    )}
+  </div>
+</div>
+
   );
 };
 
