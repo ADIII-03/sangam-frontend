@@ -1,4 +1,4 @@
-import React, { useState , useEffect ,useRef} from "react";
+import React, { useState, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 import { useDispatch } from "react-redux";
 import {
@@ -23,31 +23,31 @@ const UserPostCard = ({ post, currentUser }) => {
   }));
   const [commentersMap, setCommentersMap] = useState({});
 
-useEffect(() => {
-  async function fetchCommenters() {
-    if (!localPost._id) return;
-    const resultAction = await dispatch(getWhoCommentedOnUserPostThunk(localPost._id));
-    if (getWhoCommentedOnUserPostThunk.fulfilled.match(resultAction)) {
-      // create a map from commenter id to their info for quick lookup
-      const map = {};
-      resultAction.payload.commenters.forEach((user) => {
-        map[user.id] = user;
-      });
-      setCommentersMap(map);
+  useEffect(() => {
+    async function fetchCommenters() {
+      if (!localPost._id) return;
+      const resultAction = await dispatch(
+        getWhoCommentedOnUserPostThunk(localPost._id)
+      );
+      if (getWhoCommentedOnUserPostThunk.fulfilled.match(resultAction)) {
+        // create a map from commenter id to their info for quick lookup
+        const map = {};
+        resultAction.payload.commenters.forEach((user) => {
+          map[user.id] = user;
+        });
+        setCommentersMap(map);
+      }
     }
-  }
-  fetchCommenters();
-}, [localPost._id, dispatch]);
+    fetchCommenters();
+  }, [localPost._id, dispatch]);
 
   const [showAllComments, setShowAllComments] = useState(false);
   const [commentInput, setCommentInput] = useState("");
 
-  
- const postIdRef = useRef(localPost._id);
+  const postIdRef = useRef(localPost._id);
   useEffect(() => {
     postIdRef.current = localPost._id;
   }, [localPost._id]);
-  
 
   useEffect(() => {
     const handleReceiveComment = (comment) => {
@@ -60,37 +60,36 @@ useEffect(() => {
       }
     };
 
-   const handleReceiveLike = (like) => {
-  if (like.postId === postIdRef.current) {
-    setLocalPost((prev) => {
-      const alreadyLiked = prev.likes.some(
-        (l) => l.id === like.userId && l.actorModel === like.actorModel
-      );
-      if (alreadyLiked) return prev;
+    const handleReceiveLike = (like) => {
+      if (like.postId === postIdRef.current) {
+        setLocalPost((prev) => {
+          const alreadyLiked = prev.likes.some(
+            (l) => l.id === like.userId && l.actorModel === like.actorModel
+          );
+          if (alreadyLiked) return prev;
 
-      return {
-        ...prev,
-        likes: [...(prev.likes || []), { id: like.userId, actorModel: like.actorModel }],
-      };
-    });
-  }
-};
+          return {
+            ...prev,
+            likes: [...(prev.likes || []), { id: like.userId, actorModel: like.actorModel }],
+          };
+        });
+      }
+    };
 
-  const handleReceiveUnlike = (unlike) => {
-  if (unlike.postId === postIdRef.current) {
-    setLocalPost((prev) => ({
-      ...prev,
-      likes: (prev.likes || []).filter(
-        (l) => !(l.id === unlike.userId && l.actorModel === unlike.actorModel)
-      ),
-    }));
-  }
-};
-
+    const handleReceiveUnlike = (unlike) => {
+      if (unlike.postId === postIdRef.current) {
+        setLocalPost((prev) => ({
+          ...prev,
+          likes: (prev.likes || []).filter(
+            (l) => !(l.id === unlike.userId && l.actorModel === unlike.actorModel)
+          ),
+        }));
+      }
+    };
 
     socket.on("receiveComment", handleReceiveComment);
     socket.on("receiveLike", handleReceiveLike);
-socket.on("postUnliked", handleReceiveUnlike);
+    socket.on("postUnliked", handleReceiveUnlike);
     return () => {
       socket.off("receiveComment", handleReceiveComment);
       socket.off("receiveLike", handleReceiveLike);
@@ -98,65 +97,56 @@ socket.on("postUnliked", handleReceiveUnlike);
     };
   }, []);
 
-const handleLike = async () => {
-  try {
-    const actorModel = currentUser.isNGO ? "NGO" : "User";
+  const handleLike = async () => {
+    try {
+      const actorModel = currentUser.isNGO ? "NGO" : "User";
 
-    const wasLiked = localPost.likes?.some(
-      (like) => like.id === currentUser._id && like.actorModel === actorModel
-    );
+      const wasLiked = localPost.likes?.some(
+        (like) => like.id === currentUser._id && like.actorModel === actorModel
+      );
 
-    // ✅ Optimistic UI update
-    setLocalPost((prev) => {
-      const updatedLikes = wasLiked
-        ? prev.likes.filter(
-            (like) =>
-              !(
-                like.id === currentUser._id &&
-                like.actorModel === actorModel
-              )
-          )
-        : [
-            ...prev.likes,
-            { id: currentUser._id, actorModel }
-          ];
+      // ✅ Optimistic UI update
+      setLocalPost((prev) => {
+        const updatedLikes = wasLiked
+          ? prev.likes.filter(
+              (like) =>
+                !(
+                  like.id === currentUser._id &&
+                  like.actorModel === actorModel
+                )
+            )
+          : [...prev.likes, { id: currentUser._id, actorModel }];
 
-      return {
-        ...prev,
-        likes: updatedLikes,
-      };
-    });
+        return {
+          ...prev,
+          likes: updatedLikes,
+        };
+      });
 
-    // 🔁 Dispatch thunk — only update likes if backend sends different result
-    const updatedPost = await dispatch(likeUserPostThunk(localPost._id));
-    const newPost = updatedPost?.payload?.post;
-    if (newPost?.likes) {
-      setLocalPost((prev) => ({ ...prev, likes: newPost.likes }));
+      // 🔁 Dispatch thunk — only update likes if backend sends different result
+      const updatedPost = await dispatch(likeUserPostThunk(localPost._id));
+      const newPost = updatedPost?.payload?.post;
+      if (newPost?.likes) {
+        setLocalPost((prev) => ({ ...prev, likes: newPost.likes }));
+      }
+
+      // ✅ Emit socket
+      socket.emit(wasLiked ? "postUnliked" : "newLike", {
+        userId: currentUser._id,
+        postId: localPost._id,
+        actorModel,
+      });
+    } catch (error) {
+      console.error("Error liking post:", error);
     }
-
-    // ✅ Emit socket
-    socket.emit(wasLiked ? "postUnliked" : "newLike", {
-      userId: currentUser._id,
-      postId: localPost._id,
-      actorModel,
-    });
-  } catch (error) {
-    console.error("Error liking post:", error);
-  }
-};
-
-
-
-
+  };
 
   const handleShare = async () => {
     try {
       const updatedPost = await dispatch(shareUserPostThunk(localPost._id));
       if (updatedPost?.payload) {
         setLocalPost(updatedPost.payload.post);
-        
       }
-      
     } catch (error) {
       console.error("Error sharing post:", error);
     }
@@ -176,13 +166,14 @@ const handleLike = async () => {
     const comment = commentInput.trim();
     if (comment) {
       try {
-        const updatedPost = await dispatch(commentOnUserPostThunk({ postId: localPost._id, comment }));
+        const updatedPost = await dispatch(
+          commentOnUserPostThunk({ postId: localPost._id, comment })
+        );
         if (updatedPost?.payload) {
           setLocalPost(updatedPost.payload.post);
           setCommentInput("");
           const newComment = updatedPost.payload.post.comments.slice(-1)[0]; // last comment
-        socket.emit("newComment", { ...newComment, postId: localPost._id });
-          
+          socket.emit("newComment", { ...newComment, postId: localPost._id });
         }
       } catch (error) {
         console.error("Error commenting on post:", error);
@@ -190,7 +181,6 @@ const handleLike = async () => {
     }
   };
 
- 
   const isLiked = !!(
     currentUser?._id &&
     localPost.likes?.some(
@@ -203,32 +193,28 @@ const handleLike = async () => {
   const creatorName =
     localPost.createdBy?.name || localPost.createdBy?.id?.name || "Anonymous";
 
-
-
-
   return (
-    <div className="bg-white rounded-xl shadow-lg max-w-xl mx-auto mb-8 border border-gray-200">
+    <div className="bg-white rounded-xl shadow-lg max-w-xl w-full mx-auto mb-8 border border-gray-200 px-4 sm:px-6">
       {/* Header */}
       <div className="flex items-center p-4 border-b border-gray-100">
         {/* Profile pic placeholder */}
         <div className="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center text-xl font-semibold text-gray-600 mr-4">
-          <img src={localPost.createdBy?.id?.profilepic}  alt=""
-          className= "w-10 h-10 rounded-full border-2 border-blue-400" />
-        
+          <img
+            src={localPost.createdBy?.id?.profilepic}
+            alt=""
+            className="w-10 h-10 rounded-full border-2 border-blue-400"
+          />
         </div>
         <div>
           <h3 className="font-semibold text-gray-900">{creatorName}</h3>
-             {localPost.location?.address && (
-  <p className="text-xs text-gray-500 italic">
-    📍 {localPost.location.address}
-  </p>
-)}
+          {localPost.location?.address && (
+            <p className="text-xs text-gray-500 italic">📍 {localPost.location.address}</p>
+          )}
           <p className="text-xs text-gray-500">
             {localPost.createdAt && !isNaN(new Date(localPost.createdAt).getTime())
               ? `${formatDistanceToNow(new Date(localPost.createdAt))} ago`
               : "Invalid date"}
           </p>
-
         </div>
       </div>
 
@@ -244,7 +230,7 @@ const handleLike = async () => {
         )}
 
         {localPost.mediaType === "video" && localPost.mediaUrl && (
-          <video controls className="w-full object-cover" preload="metadata">
+          <video controls className="w-full object-contain" preload="metadata">
             <source src={localPost.mediaUrl} type="video/mp4" />
             Your browser does not support the video tag.
           </video>
@@ -271,8 +257,7 @@ const handleLike = async () => {
           aria-label="Like post"
         >
           <span className="text-lg">{isLiked ? "❤️" : "🤍"}</span>
-         <span>{Math.max(localPost.likes?.length || 0, 0)}</span>
-
+          <span>{Math.max(localPost.likes?.length || 0, 0)}</span>
         </button>
 
         <button
@@ -322,7 +307,7 @@ const handleLike = async () => {
         {localPost.comments?.length > 0 && (
           <>
             {[...localPost.comments]
-            .reverse()
+              .reverse()
               .slice(0, showAllComments ? undefined : 3)
               .map((comment) => (
                 <div
@@ -330,7 +315,6 @@ const handleLike = async () => {
                   className="border-b border-gray-100 py-2 last:border-none"
                 >
                   <Comment comment={comment} commenter={commentersMap[comment.id]} />
-
                 </div>
               ))}
 
@@ -378,7 +362,7 @@ UserPostCard.propTypes = {
         actorModel: PropTypes.string,
       })
     ),
-    
+
     comments: PropTypes.arrayOf(
       PropTypes.shape({
         _id: PropTypes.string,
@@ -388,10 +372,9 @@ UserPostCard.propTypes = {
       })
     ),
     location: PropTypes.shape({
-  address: PropTypes.string,
-  coordinates: PropTypes.arrayOf(PropTypes.number),
-}),
-
+      address: PropTypes.string,
+      coordinates: PropTypes.arrayOf(PropTypes.number),
+    }),
   }).isRequired,
   currentUser: PropTypes.shape({
     _id: PropTypes.string.isRequired,

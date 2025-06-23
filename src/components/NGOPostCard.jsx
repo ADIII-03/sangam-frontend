@@ -228,10 +228,10 @@ const NGOPostCard = ({ post, currentUser }) => {
   const ngologo = localPost.ngo?.logoUrl || "/default-ngo-logo.png";
 
   return (
-    <div className="bg-white rounded-xl shadow-lg max-w-xl mx-auto mb-8 border border-gray-200">
+    <div className="bg-white rounded-xl shadow-lg max-w-full w-full mx-auto mb-8 border border-gray-200 overflow-x-hidden">
       {/* Header */}
-      <div className="flex items-center p-4 border-b border-gray-100">
-        <div className="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center text-xl font-semibold text-gray-600 mr-4">
+      <div className="flex items-center p-3 sm:p-4 border-b border-gray-100">
+        <div className="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center text-xl font-semibold text-gray-600 mr-4 flex-shrink-0">
           <img
             src={ngologo}
             alt=""
@@ -239,9 +239,9 @@ const NGOPostCard = ({ post, currentUser }) => {
             className="w-10 h-10 rounded-full border-2 border-blue-400"
           />
         </div>
-        <div>
-          <h3 className="font-semibold text-gray-900">{ngoName}</h3>
-          <p className="text-xs text-gray-500">
+        <div className="truncate">
+          <h3 className="font-semibold text-gray-900 truncate">{ngoName}</h3>
+          <p className="text-xs text-gray-500 truncate">
             {localPost.createdAt && !isNaN(new Date(localPost.createdAt).getTime())
               ? `${formatDistanceToNow(new Date(localPost.createdAt))} ago`
               : "Invalid date"}
@@ -255,13 +255,13 @@ const NGOPostCard = ({ post, currentUser }) => {
           <img
             src={localPost.mediaUrl}
             alt="Post media"
-            className="w-full object-cover"
+            className="w-full max-w-full object-cover"
             loading="lazy"
           />
         )}
 
         {localPost.mediaType === "video" && localPost.mediaUrl && (
-          <video controls className="w-full object-cover" preload="metadata">
+          <video controls className="w-full max-w-full object-cover" preload="metadata">
             <source src={localPost.mediaUrl} type="video/mp4" />
             Your browser does not support the video tag.
           </video>
@@ -269,7 +269,7 @@ const NGOPostCard = ({ post, currentUser }) => {
       </div>
 
       {/* Caption & Category */}
-      <div className="p-4">
+      <div className="p-3 sm:p-4">
         {localPost.caption && (
           <p className="text-gray-800 mb-2 whitespace-pre-wrap">{localPost.caption}</p>
         )}
