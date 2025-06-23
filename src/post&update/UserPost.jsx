@@ -6,7 +6,7 @@ import LocationAutocomplete from "../components/LocationAutocomplete";
 import { useNavigate } from "react-router-dom";
 const UserPost = () => {
   const dispatch = useDispatch();
-  const buttonLoading = useSelector((state) => state.userPost?.buttonLoading);
+
 const navigate = useNavigate();
   const [caption, setCaption] = useState("");
   const [category, setCategory] = useState("");
@@ -14,6 +14,7 @@ const navigate = useNavigate();
   const [files, setFiles] = useState({ images: [], videos: [], documents: [] });
   const [previewUrls, setPreviewUrls] = useState([]);
 
+const createLoading = useSelector((state) => state.userpost.createLoading);
 
   const handleFileChange = (e, type) => {
     const selectedFiles = Array.from(e.target.files);
@@ -150,39 +151,14 @@ const navigate = useNavigate();
           )}
         </div>
 
-    <button
+  <button
   type="submit"
-  disabled={buttonLoading}
-  className="btn btn-primary w-full flex items-center justify-center gap-2"
+  disabled={createLoading}
+  className={`btn btn-primary w-full ${createLoading ? 'loading' : ''}`}
 >
-  {buttonLoading ? (
-    <>
-      <svg
-        className="animate-spin h-5 w-5 text-white"
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-      >
-        <circle
-          className="opacity-25"
-          cx="12"
-          cy="12"
-          r="10"
-          stroke="currentColor"
-          strokeWidth="4"
-        ></circle>
-        <path
-          className="opacity-75"
-          fill="currentColor"
-          d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-        ></path>
-      </svg>
-      Creating...
-    </>
-  ) : (
-    "Create Post"
-  )}
+  {createLoading ? 'Creating...' : 'Create Post'}
 </button>
+
 
       </form>
     </div>
