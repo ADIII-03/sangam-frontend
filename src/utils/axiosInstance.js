@@ -9,12 +9,17 @@ export const axiosInstance = axios.create({
   },
 });
 
-// Remove token from localStorage in Axios
-// Just rely on cookies being sent via 'withCredentials: true'
-
+// Add request interceptor to include token in headers
 axiosInstance.interceptors.request.use(
   (config) => {
+    // Assume token is stored in localStorage (ya Redux store se le sakte ho)
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => {
+    return Promise.reject(error);
+  }
 );
