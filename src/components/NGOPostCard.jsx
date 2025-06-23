@@ -228,7 +228,8 @@ const NGOPostCard = ({ post, currentUser }) => {
   const ngologo = localPost.ngo?.logoUrl || "/default-ngo-logo.png";
 
   return (
-    <div className="bg-white rounded-xl shadow-lg max-w-full w-full mx-auto mb-8 border border-gray-200 overflow-x-hidden">
+<div className="bg-white rounded-xl shadow-lg w-full mb-8 border border-gray-200 overflow-hidden">
+
       {/* Header */}
       <div className="flex items-center p-3 sm:p-4 border-b border-gray-100">
         <div className="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center text-xl font-semibold text-gray-600 mr-4 flex-shrink-0">

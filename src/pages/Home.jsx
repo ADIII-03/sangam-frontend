@@ -120,10 +120,10 @@ const allPosts = [
 
 
 return (
-  <div className="relative max-w-screen-sm mx-auto px-4 sm:px-6 pb-36 overflow-x-hidden"> {/* Limit max width and prevent overflow */}
+  <div className="w-full px-2 sm:px-4 pb-36 overflow-x-hidden">
     <h1 className="text-3xl font-bold text-white mb-4 sm:mb-6">Recent Posts</h1>
 
-    <div className="flex flex-col gap-4 sm:gap-6"> {/* Smaller gap on mobile */}
+    <div className="flex flex-col gap-4 sm:gap-6">
       {allPosts.map(post =>
         post.type === 'user' ? (
           <UserPostCard key={`user-${post._id}`} post={post} currentUser={userProfile} />
@@ -160,6 +160,7 @@ return (
     )}
   </div>
 );
+
 
 
 };

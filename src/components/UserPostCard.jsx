@@ -194,7 +194,8 @@ const UserPostCard = ({ post, currentUser }) => {
     localPost.createdBy?.name || localPost.createdBy?.id?.name || "Anonymous";
 
   return (
-    <div className="bg-white rounded-xl shadow-lg max-w-xl w-full mx-auto mb-8 border border-gray-200 px-4 sm:px-6">
+<div className="bg-white rounded-xl shadow-lg w-full mb-8 border border-gray-200 overflow-hidden">
+
       {/* Header */}
       <div className="flex items-center p-4 border-b border-gray-100">
         {/* Profile pic placeholder */}
