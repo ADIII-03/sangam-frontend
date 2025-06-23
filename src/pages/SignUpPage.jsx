@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
 import { registerUserThunk ,getUserProfileThunk } from "../store/slice/user/user.thunk";
 import { Loader, CameraIcon } from "lucide-react";
+import { motion } from 'framer-motion';
 
 const SignUpPage = () => {
   const navigate = useNavigate();

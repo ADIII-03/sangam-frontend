@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUserThunk } from "../store/slice/user/user.thunk";
 import { toast } from "react-hot-toast";
-import { motion } from "framer-motion";
+import { motion } from 'framer-motion';
+
 import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {

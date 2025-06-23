@@ -18,7 +18,7 @@
     "clsx": "^2.1.1",
     "daisyui": "^5.0.43",
     "date-fns": "^4.1.0",
-    "framer-motion": "^12.16.0",
+    "framer-motion": "^12.19.1",
     "lodash": "^4.17.21",
     "lucide-react": "^0.515.0",
     "mapbox-gl": "^3.12.0",

@@ -5,6 +5,7 @@ import { forgotPasswordThunk } from '../store/slice/user/user.thunk';
 import { motion } from 'framer-motion';
 
 
+
 const ForgotPasswordPage = () => {
 
   const [email, setEmail] = useState('');
