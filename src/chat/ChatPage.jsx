@@ -51,10 +51,8 @@ const ChatPage = ({ partner }) => {
       if (from === chatPartnerId) setIsTyping(false);
     });
      socket.on("messageSeen", ({ receiverId }) => {
-    // Agar current chat partner hai toh mark messages seen in redux store
     if (receiverId === chatPartnerId) {
-      dispatch(markMessagesSeen(chatPartnerId)); 
-      // Yeh action tumhe banana padega jo Redux state mein messages ke 'seen' ko update kare
+      dispatch(markMessagesSeen({ receiverId: chatPartnerId })); 
     }
   });
 

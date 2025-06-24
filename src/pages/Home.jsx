@@ -54,42 +54,66 @@ const handleScroll = useCallback(
   }, 200),
   [page, lastFetchedPage, hasMoreUserPosts, hasMoreNGOPosts]
 );
+const [sharingLocation, setSharingLocation] = useState(false);
+
 const handleShareLocation = () => {
   if (!navigator.geolocation) {
     alert("Geolocation is not supported by your browser");
     return;
   }
 
-  navigator.geolocation.getCurrentPosition(
-    position => {
-      const { latitude, longitude } = position.coords;
+  setSharingLocation(true); // show loader
 
-      const mapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
+  const successHandler = position => {
+    const { latitude, longitude } = position.coords;
+    const mapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
 
-      if (navigator.share) {
-        navigator
-          .share({
-            title: "🚨 Emergency",
-            text: `I need help. Here's my location:\n${mapsLink}`,
-          })
-          .then(() => console.log("Location shared successfully"))
-          .catch(err => console.error("Error sharing location", err));
-      } else {
-        navigator.clipboard.writeText(mapsLink);
-        alert("Location link copied to clipboard:\n" + mapsLink);
-      }
-    },
-    error => {
+    if (navigator.share) {
+      navigator
+        .share({
+          title: "🚨 Emergency",
+          text: `I need help. Here's my location:\n${mapsLink}`,
+        })
+        .catch(err => console.error("Error sharing location", err));
+    } else {
+      navigator.clipboard.writeText(mapsLink);
+      alert("Location link copied to clipboard:\n" + mapsLink);
+    }
+
+    setSharingLocation(false); // hide loader
+  };
+
+  const errorHandler = error => {
+    if (error.code === error.TIMEOUT) {
+      // Retry without high accuracy
+      navigator.geolocation.getCurrentPosition(
+        successHandler,
+        finalError => {
+          alert("Failed to fetch location: " + finalError.message);
+          setSharingLocation(false);
+        },
+        {
+          enableHighAccuracy: false,
+          timeout: 10000,
+          maximumAge: 0,
+        }
+      );
+    } else {
       alert("Failed to fetch location: " + error.message);
-    },
+      setSharingLocation(false);
+    }
+  };
+
+  navigator.geolocation.getCurrentPosition(
+    successHandler,
+    errorHandler,
     {
-      enableHighAccuracy: true,       // ✅ Force GPS on mobile
-      timeout: 10000,                 // 10 seconds to wait
-      maximumAge: 0                   // ✅ Don’t use cached location
+      enableHighAccuracy: true,
+      timeout: 15000,
+      maximumAge: 0,
     }
   );
 };
-
 
 
   useEffect(() => {
@@ -135,27 +159,59 @@ return (
 
     {userProfile?.gender === "female" && userProfile?.femaleVerified && (
       <div className="fixed z-50 right-4 sm:right-6 bottom-16 sm:bottom-6">
-        <button
-          onClick={handleShareLocation}
-          className="flex items-center gap-2 bg-gradient-to-r from-red-600 to-red-800 text-white font-semibold px-4 py-3 rounded-full shadow-lg hover:scale-105 transition-transform duration-300"
-          title="Send Emergency Location"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5 animate-pulse"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth="2"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M13 16h-1v-4h-1m1-4h.01M12 6.5C7.305 6.5 3.5 10.305 3.5 15S7.305 23.5 12 23.5 20.5 19.695 20.5 15 16.695 6.5 12 6.5z"
-            />
-          </svg>
-          SOS
-        </button>
+       <button
+  onClick={handleShareLocation}
+  disabled={sharingLocation}
+  className={`flex items-center gap-2 bg-gradient-to-r from-red-600 to-red-800 text-white font-semibold px-4 py-3 rounded-full shadow-lg transition-transform duration-300 ${
+    sharingLocation ? "opacity-60 cursor-not-allowed" : "hover:scale-105"
+  }`}
+  title="Send Emergency Location"
+>
+  {sharingLocation ? (
+    <>
+      <svg
+        className="animate-spin h-5 w-5 text-white"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+      >
+        <circle
+          className="opacity-25"
+          cx="12"
+          cy="12"
+          r="10"
+          stroke="currentColor"
+          strokeWidth="4"
+        ></circle>
+        <path
+          className="opacity-75"
+          fill="currentColor"
+          d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+        ></path>
+      </svg>
+      <span>Fetching...</span>
+    </>
+  ) : (
+    <>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-5 w-5 animate-pulse"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        strokeWidth="2"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M13 16h-1v-4h-1m1-4h.01M12 6.5C7.305 6.5 3.5 10.305 3.5 15S7.305 23.5 12 23.5 20.5 19.695 20.5 15 16.695 6.5 12 6.5z"
+        />
+      </svg>
+      SOS
+    </>
+  )}
+</button>
+
       </div>
     )}
   </div>

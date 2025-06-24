@@ -19,6 +19,11 @@ const notificationSlice = createSlice({
     clearNotifications: (state) => {
       state.notifications = [];
     },
+
+    selectUnreadCount :(state) => {
+      const unreadCount = state.notifications.filter((notification) => !notification.read).length;
+      return unreadCount;
+    },
   },
   extraReducers: (builder) => {
     builder

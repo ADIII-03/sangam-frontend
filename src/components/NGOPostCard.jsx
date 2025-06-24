@@ -251,7 +251,7 @@ const NGOPostCard = ({ post, currentUser }) => {
       </div>
 
       {/* Media */}
-      <div className="rounded-b-xl">
+      <div className="w-full overflow-hidden">
         {localPost.mediaType === "image" && localPost.mediaUrl && (
           <img
             src={localPost.mediaUrl}

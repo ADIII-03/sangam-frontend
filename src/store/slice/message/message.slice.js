@@ -17,17 +17,20 @@ export const messageSlice = createSlice({
   name: "message",
   initialState,
   reducers: {
-      markMessagesSeen: (state, action) => {
-    const receiverId = action.payload.receiverId; // jis chat partner ke messages hain
-    if (!state.messages[receiverId]) return;
+   markMessagesSeen: (state, action) => {
+  const { receiverId } = action.payload;
 
-    state.messages[receiverId] = state.messages[receiverId].map(msg => {
-      if (msg.seen === false) {
-        return { ...msg, seen: true };
-      }
-      return msg;
-    });
-  },
+  if (!state.messages[receiverId]) return;
+
+  state.messages[receiverId] = state.messages[receiverId].map((msg) => {
+    // Only mark messages sent *by* that partner and not already seen
+    if (!msg.seen && msg.senderId === receiverId) {
+      return { ...msg, seen: true };
+    }
+    return msg;
+  });
+},
+
  addMessage: (state, action) => {
     const newMsg = action.payload;
     const partnerId = newMsg.senderId === state.currentUserId ? newMsg.receiverId : newMsg.senderId;

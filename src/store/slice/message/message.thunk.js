@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { toast } from "react-hot-toast";
 import { axiosInstance } from "../../../utils/axiosInstance.js";
-import {addPartner, setPartnersWithLastMessages} from "./message.slice.js";
+import {addPartner, setPartnersWithLastMessages,markMessagesSeen} from "./message.slice.js";
 
 // ✅ 1. Send a Message
 export const sendMessageThunk = createAsyncThunk(
@@ -90,3 +90,20 @@ export const getPartnersWithLastMessagesThunk = (userId) => async (dispatch) => 
 };
 
 
+export const markMessagesSeenThunk = createAsyncThunk(
+  "message/markSeen",
+  async ({ receiverId }, { dispatch, rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.post(`/message/seen/${receiverId}`);
+
+      if (response.data.success) {
+        dispatch(markMessagesSeen({ receiverId }));
+      }
+
+      return response.data;
+    } catch (error) {
+      const errMsg = error?.response?.data?.message || "Failed to mark messages as seen.";
+      return rejectWithValue(errMsg);
+    }
+  }
+);

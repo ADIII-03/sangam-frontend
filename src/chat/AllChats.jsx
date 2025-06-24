@@ -49,6 +49,21 @@ const AllChats = () => {
     return chatMsgs.length > 0 ? chatMsgs[chatMsgs.length - 1] : null;
   };
 
+  const sortedPartners = [...partners].sort((a, b) => {
+  const aId = getChatPartnerId(a);
+  const bId = getChatPartnerId(b);
+
+  const aLastMsg = getLastMessage(aId);
+  const bLastMsg = getLastMessage(bId);
+
+  const aTime = aLastMsg ? new Date(aLastMsg.createdAt).getTime() : 0;
+  const bTime = bLastMsg ? new Date(bLastMsg.createdAt).getTime() : 0;
+
+  // Sort descending (most recent first)
+  return bTime - aTime;
+});
+
+
   return (
     <div
       className="bg-gray-900 text-white h-screen
@@ -59,11 +74,11 @@ const AllChats = () => {
     >
       <h2 className="text-xl font-bold mb-4 sm:text-left text-center">Chats</h2>
 
-      {partners.length === 0 ? (
+      {sortedPartners.length === 0 ? (
         <p className="text-gray-500 text-center">No chats yet.</p>
       ) : (
         <ul className="space-y-2 flex-1">
-          {partners.map((partner) => {
+          {sortedPartners.map((partner) => {
             const chatPartnerId = getChatPartnerId(partner);
             const lastMsg = getLastMessage(chatPartnerId);
             const isUnread =

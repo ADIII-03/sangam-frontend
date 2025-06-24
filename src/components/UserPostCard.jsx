@@ -218,7 +218,7 @@ const UserPostCard = ({ post, currentUser }) => {
   </div>
 
   {/* Media */}
-  <div className="w-full max-h-[600px] sm:max-h-[500px] md:max-h-[600px] lg:max-h-[700px] overflow-hidden">
+<div className="w-full overflow-hidden">
     {localPost.mediaType === "image" && localPost.mediaUrl && (
       <img
         src={localPost.mediaUrl}
