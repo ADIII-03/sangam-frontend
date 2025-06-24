@@ -56,64 +56,57 @@ const handleScroll = useCallback(
 );
 const [sharingLocation, setSharingLocation] = useState(false);
 
-const handleShareLocation = () => {
-  if (!navigator.geolocation) {
-    alert("Geolocation is not supported by your browser");
-    return;
+const getLocation = (options) =>
+  new Promise((resolve, reject) =>
+    navigator.geolocation.getCurrentPosition(resolve, reject, options)
+  );
+
+const handleShareLocation = async () => {
+  setSharingLocation(true);
+
+  try {
+    // 1. Try low accuracy first (fast + good enough)
+    const position = await getLocation({
+      enableHighAccuracy: false,
+      timeout: 8000,
+      maximumAge: 10000,
+    });
+
+    shareOrCopy(position.coords.latitude, position.coords.longitude);
+  } catch (err1) {
+    console.warn("Low accuracy failed, retrying high accuracy...", err1);
+
+    try {
+      // 2. Retry with high accuracy
+      const position = await getLocation({
+        enableHighAccuracy: true,
+        timeout: 15000,
+        maximumAge: 0,
+      });
+
+      shareOrCopy(position.coords.latitude, position.coords.longitude);
+    } catch (err2) {
+      alert("Failed to fetch location:\n" + err2.message);
+    }
   }
 
-  setSharingLocation(true); // show loader
-
-  const successHandler = position => {
-    const { latitude, longitude } = position.coords;
-    const mapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
-
-    if (navigator.share) {
-      navigator
-        .share({
-          title: "🚨 Emergency",
-          text: `I need help. Here's my location:\n${mapsLink}`,
-        })
-        .catch(err => console.error("Error sharing location", err));
-    } else {
-      navigator.clipboard.writeText(mapsLink);
-      alert("Location link copied to clipboard:\n" + mapsLink);
-    }
-
-    setSharingLocation(false); // hide loader
-  };
-
-  const errorHandler = error => {
-    if (error.code === error.TIMEOUT) {
-      // Retry without high accuracy
-      navigator.geolocation.getCurrentPosition(
-        successHandler,
-        finalError => {
-          alert("Failed to fetch location: " + finalError.message);
-          setSharingLocation(false);
-        },
-        {
-          enableHighAccuracy: false,
-          timeout: 10000,
-          maximumAge: 0,
-        }
-      );
-    } else {
-      alert("Failed to fetch location: " + error.message);
-      setSharingLocation(false);
-    }
-  };
-
-  navigator.geolocation.getCurrentPosition(
-    successHandler,
-    errorHandler,
-    {
-      enableHighAccuracy: true,
-      timeout: 15000,
-      maximumAge: 0,
-    }
-  );
+  setSharingLocation(false);
 };
+
+function shareOrCopy(lat, lng) {
+  const mapsLink = `https://www.google.com/maps?q=${lat},${lng}`;
+  if (navigator.share) {
+    navigator
+      .share({
+        title: "🚨 Emergency",
+        text: `I need help. Here's my location:\n${mapsLink}`,
+      })
+      .catch(console.error);
+  } else {
+    navigator.clipboard.writeText(mapsLink);
+    alert("Location copied to clipboard:\n" + mapsLink);
+  }
+}
 
 
   useEffect(() => {
