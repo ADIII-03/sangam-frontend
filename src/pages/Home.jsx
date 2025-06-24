@@ -68,7 +68,7 @@ const handleShareLocation = async () => {
     // 1. Try low accuracy first (fast + good enough)
     const position = await getLocation({
       enableHighAccuracy: false,
-      timeout: 8000,
+      timeout: 20000,
       maximumAge: 10000,
     });
 
@@ -80,8 +80,8 @@ const handleShareLocation = async () => {
       // 2. Retry with high accuracy
       const position = await getLocation({
         enableHighAccuracy: true,
-        timeout: 15000,
-        maximumAge: 0,
+        timeout: 20000,
+        maximumAge: 10000,
       });
 
       shareOrCopy(position.coords.latitude, position.coords.longitude);
