@@ -6,7 +6,8 @@ import { toast } from "react-hot-toast";
 import { registerUserThunk ,getUserProfileThunk } from "../store/slice/user/user.thunk";
 import { Loader, CameraIcon } from "lucide-react";
 import { motion } from 'framer-motion';
-
+import { Navigate } from "react-router-dom";
+import { Helmet } from 'react-helmet';
 const SignUpPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -22,7 +23,11 @@ const SignUpPage = () => {
   });
 
   const [profilePicPreview, setProfilePicPreview] = useState(null);
+const isAuthenticated = useSelector((state) => state.user.isAuthenticated);
 
+  if (isAuthenticated) {
+    return <Navigate to="/" />;
+  }
   const handleChange = (e) => {
     if (e.target.name === "profilepic") {
       const file = e.target.files[0];
@@ -74,6 +79,11 @@ const SignUpPage = () => {
   };
 
   return (
+
+    <>
+       <Helmet>
+         <title>Signup - Sangam</title>
+      </Helmet>
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -202,6 +212,7 @@ const SignUpPage = () => {
         </Link>
       </div>
     </motion.div>
+       </>
   );
 };
 

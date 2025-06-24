@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import NGOPostCard from "../components/NGOPostCard";
 import { nanoid } from "nanoid";
 import { addPartner, setSelectedPartner } from "../store/slice/message/message.slice";
-
+import { Helmet } from "react-helmet";
 const NgoProfile = () => {
   const dispatch = useDispatch();
   const { id } = useParams();
@@ -145,6 +145,9 @@ const NgoProfile = () => {
   }
 
   return (
+
+    <>
+    <Helmet><title>NGO Profile</title></Helmet>
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 overflow-x-hidden">
       {/* NGO Header */}
       <div className="flex flex-col sm:flex-row gap-6 items-center border-b pb-6">
@@ -284,6 +287,7 @@ const NgoProfile = () => {
         )}
       </div>
     </div>
+    </>
   );
 };
 

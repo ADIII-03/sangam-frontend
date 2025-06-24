@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import UserPostCard from "../components/UserPostCard";
 import { useDispatch } from "react-redux";
 import { addPartner , setSelectedPartner } from "../store/slice/message/message.slice";
+import {Helmet} from 'react-helmet'
 const UserProfile = () => {
   const { id } = useParams();
   const { userProfile } = useSelector((state) => state.user); // fallback
@@ -134,7 +135,9 @@ const goToChat = () => {
 );
 
 
-  return (
+  return ( 
+    <>
+    <Helmet><title>{user.name}</title></Helmet>
     <div className="max-w-screen-sm sm:max-w-4xl mx-auto px-4 sm:px-6 overflow-x-hidden">
 
       {/* Profile Header */}
@@ -231,6 +234,7 @@ const goToChat = () => {
         )}
       </div>
     </div>
+    </>
   );
 };
 

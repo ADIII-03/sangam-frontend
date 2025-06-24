@@ -11,12 +11,12 @@ import { Provider } from 'react-redux';
 import { Toaster } from 'react-hot-toast'; // ✅ Import Toaster
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <StrictMode>
+  
     <BrowserRouter>
       <Provider store={store}>
         <App />
         <Toaster position="top-centre" reverseOrder={false} /> {/* ✅ Mount globally */}
       </Provider>
     </BrowserRouter>
-  </StrictMode>
+  
 );

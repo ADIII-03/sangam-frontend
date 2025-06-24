@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { femaleVerifyThunk } from "../store/slice/user/user.thunk";
 import { useNavigate } from "react-router-dom";
-
+import {Helmet} from 'react-helmet'
 const FemaleVerificationPage = () => {
   const [document, setDocument] = useState(null);
   const dispatch = useDispatch();
@@ -40,6 +40,8 @@ if (femaleVerifyThunk.fulfilled.match(result)) {
 
   };
   return (
+    <>
+    <Helmet><title>Female Verification</title></Helmet>
     <div className="max-w-md mx-auto mt-12 p-8 bg-base-100 rounded-lg shadow-lg">
       <h2 className="text-3xl font-bold mb-6 text-center text-primary">
         Female Verification
@@ -80,6 +82,7 @@ if (femaleVerifyThunk.fulfilled.match(result)) {
 
       </form>
     </div>
+    </>
   );
 };
 

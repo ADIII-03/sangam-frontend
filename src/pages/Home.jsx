@@ -5,7 +5,7 @@ import { getAllNGOPostsThunk } from '../store/slice/ngopost/ngopost.thunk.js';
 import UserPostCard from '../components/UserPostCard';
 import NGOPostCard from '../components/NGOPostCard';
 
-
+import { Helmet } from 'react-helmet';
 
 const Home = () => {
   const dispatch = useDispatch();
@@ -145,6 +145,9 @@ const allPosts = [
 
 
 return (
+
+  <>
+  <Helmet><title>Home -Sangam</title></Helmet>
   <div className="w-full px-1 sm:px-2 pb-36 overflow-x-hidden">
     <h1 className="text-3xl font-bold text-white mb-4 sm:mb-6">Recent Posts</h1>
 
@@ -216,6 +219,7 @@ return (
       </div>
     )}
   </div>
+  </>
 );
 
 

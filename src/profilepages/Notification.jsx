@@ -6,7 +6,7 @@ import {
 } from "../store/slice/notification/notification.thunk";
 
 import {acceptVolunteersThunk, rejectVolunteer} from '../store/slice/ngo/ngo.thunk' 
-
+import { Helmet } from "react-helmet";
 const Notification = () => {
   const dispatch = useDispatch();
   const { notifications, loading } = useSelector((state) => state.notification);
@@ -43,9 +43,11 @@ const handleRejectRequest = (notification) => {
 
   if (loading)
     return (
+  <><Helmet><title>Loading - Sangam</title></Helmet>
       <div className="flex justify-center items-center min-h-[100px]">
         <button className="btn btn-primary loading">Loading</button>
       </div>
+      </>
     );
 
   if (!notifications || notifications.length === 0)
@@ -56,6 +58,8 @@ const handleRejectRequest = (notification) => {
     );
 
   return (
+    <>
+    <Helmet><title>Notifications -Sangam</title></Helmet>
     <div className="max-w-md mx-auto mt-6 p-4 bg-base-200 rounded-lg shadow-lg">
       <h2 className="text-2xl font-semibold mb-4">Notifications</h2>
 
@@ -91,6 +95,7 @@ const handleRejectRequest = (notification) => {
         </div>
       ))}
     </div>
+    </>
   );
 };
 

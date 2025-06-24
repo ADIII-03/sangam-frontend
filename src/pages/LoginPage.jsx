@@ -4,11 +4,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { loginUserThunk } from "../store/slice/user/user.thunk";
 import { toast } from "react-hot-toast";
 import { motion } from 'framer-motion';
+import {Helmet} from 'react-helmet'
 
 import { useNavigate } from "react-router-dom";
-
+import { Navigate } from "react-router-dom";
 const LoginPage = () => {
   const navigate = useNavigate();
+
+ 
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -16,7 +19,11 @@ const LoginPage = () => {
 
   const dispatch = useDispatch();
   const { buttonLoading } = useSelector((state) => state.user);
+ const isAuthenticated = useSelector((state) => state.user.isAuthenticated);
 
+  if (isAuthenticated) {
+    return <Navigate to="/" />;
+  }
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -42,6 +49,11 @@ const LoginPage = () => {
 
 
   return (
+    <>
+
+        <Helmet>
+         <title>Login - Sangam</title>
+      </Helmet>
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -106,7 +118,10 @@ const LoginPage = () => {
 
       </form>
     </motion.div>
+      </>
   );
+  
 };
+
 
 export default LoginPage;

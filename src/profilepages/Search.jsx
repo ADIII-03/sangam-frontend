@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { searchUsers } from '../store/slice/user/user.thunk';
 import { useNavigate } from 'react-router-dom';
 import { FiTrash2 } from 'react-icons/fi';
-
+import {Helmet} from 'react-helmet';
 const Search = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -58,6 +58,11 @@ const Search = () => {
   };
 
   return (
+
+    <>
+    <Helmet>
+      <title>Search-Sangam</title>
+    </Helmet>
     <div className="p-4 max-w-3xl mx-auto">
       <h2 className="text-2xl font-bold mb-4">Search Accounts</h2>
 
@@ -130,6 +135,7 @@ const Search = () => {
         </div>
       )}
     </div>
+    </>
   );
 };
 

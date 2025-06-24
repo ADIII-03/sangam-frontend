@@ -5,7 +5,8 @@ import { useParams } from 'react-router-dom';
 import { resetPasswordThunk } from '../store/slice/user/user.thunk';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-
+import {Helmet} from 'react-helmet'
+ 
 const ResetPasswordPage = () => {
   const navigate = useNavigate();
   const [password, setPassword] = useState('');
@@ -37,6 +38,8 @@ const ResetPasswordPage = () => {
 
 
   return (
+    <>
+    <Helmet><title>Reset Password</title></Helmet>
     <motion.div
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
@@ -89,6 +92,7 @@ const ResetPasswordPage = () => {
 
       </form>
     </motion.div>
+    </>
   );
 };
 

@@ -4,7 +4,7 @@ import { toast } from 'react-hot-toast';
 import { forgotPasswordThunk } from '../store/slice/user/user.thunk';
 import { motion } from 'framer-motion';
 
-
+import {Helmet } from 'react-helmet';
 
 const ForgotPasswordPage = () => {
 
@@ -29,6 +29,9 @@ const ForgotPasswordPage = () => {
 
 
   return (
+
+    <>
+    <Helmet><title>Forgot Password</title></Helmet>
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -74,6 +77,7 @@ const ForgotPasswordPage = () => {
         </motion.button>
       </form>
     </motion.div>
+    </>
   );
 };
 

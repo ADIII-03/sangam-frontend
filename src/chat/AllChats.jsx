@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import socket from "../socket";
 import { addMessage } from "../store/slice/message/message.slice";
-
+import { Helmet } from "react-helmet";
 const AllChats = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -65,6 +65,8 @@ const AllChats = () => {
 
 
   return (
+    <>
+    <Helmet><title>ChatPage-Sangam</title></Helmet>
     <div
       className="bg-gray-900 text-white h-screen
       w-full sm:w-80
@@ -121,6 +123,7 @@ const AllChats = () => {
         </ul>
       )}
     </div>
+    </>
   );
 };
 
